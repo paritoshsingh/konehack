@@ -11,6 +11,7 @@ class CPUutil(object):
  	self.prev_total = 0
  	self.new_idle = 0
  	self.new_total = 0
+
 def get(self):
 	self.read()
 	delta_idle = self.new_idle - self.prev_idle
@@ -18,7 +19,8 @@ def get(self):
 	cpuut = 0.0
 	if (self.prev_total != 0) and (delta_total != 0):
 		cpuut = ((delta_total - delta_idle) * 100.0 / delta_total)
-		return cpuut
+	return cpuut
+
 def read(self):
 	self.prev_idle = self.new_idle
 	self.prev_total = self.new_total

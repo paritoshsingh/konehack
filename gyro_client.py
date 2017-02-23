@@ -24,13 +24,14 @@ def read(self):
 	self.prev_total = self.new_total
 	self.new_idle = 0;
 	self.new_total = 0;
-with open('/proc/stat') as f:
-	line = f.readline()
-	parts = line.split()
-	if len(parts) >= 5:
-		self.new_idle = int(parts[4])
-	for part in parts[1:]:
-		self.new_total += int(part)
+
+# with open('/proc/stat') as f:
+# 	line = f.readline()
+# 	parts = line.split()
+# 	if len(parts) >= 5:
+# 		self.new_idle = int(parts[4])
+# 	for part in parts[1:]:
+# 		self.new_total += int(part)
 
 
 #Initialise class to retrieve CPU Usage

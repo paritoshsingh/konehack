@@ -28,9 +28,9 @@ with open('/proc/stat') as f:
 	line = f.readline()
 	parts = line.split()
 	if len(parts) >= 5:
-	self.new_idle = int(parts[4])
+		self.new_idle = int(parts[4])
 	for part in parts[1:]:
-	self.new_total += int(part)
+		self.new_total += int(part)
 
 
 #Initialise class to retrieve CPU Usage

@@ -36,8 +36,7 @@ with open('/proc/stat') as f:
 #Initialise class to retrieve CPU Usage
 cpuutil = CPUutil()
 
-macAddress = hex(uuid.getnode())[2:-1]macAddress = format(long(macAddress, 16),'012x')
-#macAddress="0017c4a5db29" #you can give the mac address as default also
+macAddress="b8:27:eb:ce:71:d4" #you can give the mac address as default also
 
 #Set the variables for connecting to the iot service
 broker = ""

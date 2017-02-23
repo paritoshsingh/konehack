@@ -5,7 +5,7 @@ import uuid
 
 
 
-macAddress="b8:27:eb:ce:71:d4" #you can give the mac address as default also
+macAddress="gyro-pi1" #you can give the mac address as default also
 
 #Set the variables for connecting to the iot service
 broker = ""

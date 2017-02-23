@@ -5,7 +5,7 @@ import uuid
 
 
 
-macAddress="gyro-pi1" #you can give the mac address as default also
+deviceId="gyro-pi1" #you can give the mac address as default also
 
 #Set the variables for connecting to the iot service
 broker = ""
@@ -23,7 +23,7 @@ print("MAC address: " + macAddress)
 
 #Creating the client connection
 #Set clientID and broker
-clientID = "aaaaa:" + organization + ":" + deviceType + ":" + macAddress
+clientID = "d:" + organization + ":" + deviceType + ":" + deviceId
 broker = organization + ".messaging.internetofthings.ibmcloud.com"
 mqttc = mqtt.Client(clientID)
 

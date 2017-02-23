@@ -18,7 +18,7 @@ deviceType = "gyro-pi"
 topic = "iot-2/evt/status/fmt/json"
 
 
-print("MAC address: " + macAddress)
+print("devicid: " + deviceId)
 
 
 #Creating the client connection

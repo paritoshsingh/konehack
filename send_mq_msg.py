@@ -60,9 +60,10 @@ while mqttc.loop() == 0:
 		c.execute("select a.* from messages a left join sent_messages b on a.message_id=b.message_id and b.message_id is null limit 1;")
 		r = [dict((c.description[i][0], value) \
 			for i, value in enumerate(row)) for row in c.fetchall()]
-		r[0]
+		
 		json.dumps(r[0])	
- 		# msg = json.JSONEncoder().encode({"d":{ "measured_timestamp":datetime.utcnow().isoformat(' '), "gyro_xout":gyro_xout_scaled, "gyro_yout":gyro_yout_scaled, "gyro_zout":gyro_zout_scaled, "accel_xout":accel_xout_scaled, "accel_yout":accel_yout_scaled, "accel_zout":accel_zout_scaled, "x_rotation":x_rotation, "y_rotation":y_rotation}})
+ 		msg = json.JSONEncoder().encode({"d":json.dumps(r[0])})
+ 		json.dumps(msg)
  	except:
  		print "errpr"
  		conn.close()

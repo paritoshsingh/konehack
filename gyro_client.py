@@ -4,7 +4,7 @@ import json
 import uuid
 import smbus
 import math
-
+import datetime
 
 
 # Power management registers
@@ -89,11 +89,11 @@ while mqttc.loop() == 0:
 	accel_yout_scaled = accel_yout / 16384.0
 	accel_zout_scaled = accel_zout / 16384.0
 
- 	msg = json.JSONEncoder().encode({"d":{"gyro_xout":gyro_xout, "gyro_yout":gyro_yout, "gyro_zout":gyro_zout, "accel_xout":accel_xout, "accel_yout":accel_yout, "accel_zout":accel_zout}})
+ 	msg = json.JSONEncoder().encode({"d":{"measured_timestamp":datetime.datetime.now(), "gyro_xout":gyro_xout, "gyro_yout":gyro_yout, "gyro_zout":gyro_zout, "accel_xout":accel_xout, "accel_yout":accel_yout, "accel_zout":accel_zout}})
  
  	mqttc.publish(topic, payload=msg, qos=0, retain=False)
  	print "message published"
 
- 	time.sleep(5)
+ 	time.sleep(0.01)
  	pass
 

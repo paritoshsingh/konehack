@@ -102,6 +102,6 @@ while mqttc.loop() == 0:
  	mqttc.publish(topic, payload=msg, qos=0, retain=False)
  	print "message published"
 
- 	time.sleep(10)
+ 	time.sleep(0.05)
  	pass
 

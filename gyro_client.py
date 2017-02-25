@@ -83,9 +83,9 @@ while mqttc.loop() == 0:
 	gyro_yout = read_word_2c(0x45)
 	gyro_zout = read_word_2c(0x47)
 
-	gyro_xout_scaled=(gyro_xout / 131)
-	gyro_yout_scaled=(gyro_yout / 131)
-	gyro_zout_scaled=(gyro_zout / 131)
+	gyro_xout_scaled =(gyro_xout / 131)
+	gyro_yout_scaled =(gyro_yout / 131)
+	gyro_zout_scaled =(gyro_zout / 131)
 
 	accel_xout = read_word_2c(0x3b)
 	accel_yout = read_word_2c(0x3d)
@@ -94,11 +94,14 @@ while mqttc.loop() == 0:
 	accel_yout_scaled = accel_yout / 16384.0
 	accel_zout_scaled = accel_zout / 16384.0
 
- 	msg = json.JSONEncoder().encode({"d":{"measured_timestamp":datetime.utcnow().isoformat(' '), "gyro_xout":gyro_xout_scaled, "gyro_yout":gyro_yout_scaled, "gyro_zout":gyro_zout_scaled, "accel_xout":accel_xout_scaled, "accel_yout":accel_yout_scaled, "accel_zout":accel_zout_scaled}})
+	x_rotation=get_x_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled)
+	y_rotation=get_y_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled)
+
+ 	msg = json.JSONEncoder().encode({"d":{"measured_timestamp":datetime.utcnow().isoformat(' '), "gyro_xout":gyro_xout_scaled, "gyro_yout":gyro_yout_scaled, "gyro_zout":gyro_zout_scaled, "accel_xout":accel_xout_scaled, "accel_yout":accel_yout_scaled, "accel_zout":accel_zout_scaled, "x_rotation":x_rotation, "y_rotation":y_rotation}})
  
  	mqttc.publish(topic, payload=msg, qos=0, retain=False)
  	print "message published"
 
- 	time.sleep(0.01)
+ 	time.sleep(0.1)
  	pass
 

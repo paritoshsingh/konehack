@@ -61,7 +61,7 @@ while mqttc.loop() == 0:
 		r = [dict((c.description[i][0], value) \
 			for i, value in enumerate(row)) for row in c.fetchall()]
 		
-		json.dumps(r[0])	
+		print json.dumps(r[0])	
  		msg = json.JSONEncoder().encode({"d":json.dumps(r[0])})
  		json.dumps(msg)
  	except:

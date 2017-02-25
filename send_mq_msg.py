@@ -57,17 +57,16 @@ while mqttc.loop() == 0:
 	try:
 		conn=sqlite3.connect("sqlite3/msgDb.db")
 		c = conn.cursor()
-		c.execute("select a.* from messages a left join sent_messages b on a.message_id=b.message_id and b.message_id is null limit 1;")
+		c.execute("select a.* from messages a left join sent_messages b on a.message_id=b.message_id and b.message_id is null order by a.message_id desc limit 1;")
 		r = [dict((c.description[i][0], value) \
 			for i, value in enumerate(row)) for row in c.fetchall()]
 		
-		print json.dumps(r[0])	
- 		msg = json.JSONEncoder().encode({"d":json.dumps(r[0])})
- 		json.dumps(msg)
+		# print json.dumps(r[0])	
+ 		msg = json.JSONEncoder().encode({"d":r[0]})
+ 		# json.dumps(msg)
  	except:
- 		print "errpr"
  		conn.close()
- 	# mqttc.publish(topic, payload=msg, qos=1, retain=False)
+ 	mqttc.publish(topic, payload=msg, qos=2, retain=False)
  	print "message published"
 
  	

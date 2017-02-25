@@ -1,10 +1,11 @@
 #!/usr/bin/python
 import time
 import smbus
-import matharp
+import math
 import sqlite3
 import sys
 from datetime import datetime
+import uuid
 
 # Power management registers
 power_mgmt_1 = 0x6b

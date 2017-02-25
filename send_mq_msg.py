@@ -1,5 +1,6 @@
 import time
 import paho.mqtt.client as mqtt
+import paho.mqtt.publish as publish
 import json
 import uuid
 from datetime import datetime
@@ -13,18 +14,38 @@ username = "use-token-auth"
 password = "gyropiauth" #auth-token
 organization = "blve66" #org_id
 deviceType = "gyro-pi"
-
 topic = "iot-2/evt/status/fmt/json"
-
-
-print("devicid: " + deviceId)
-
-
 #Creating the client connection
 #Set clientID and broker
 clientID = "d:" + organization + ":" + deviceType + ":" + deviceId
 broker = organization + ".messaging.internetofthings.ibmcloud.com"
 mqttc = mqtt.Client(clientID)
+
+# The callback for when the client receives a CONNACK response from the server.
+def on_connect(client, userdata, flags, rc):
+    print("Connected with result code "+str(rc))
+    try:
+    	conn=sqlite3.connect("/home/pi/sqlite3/msgDb.db")
+		c = conn.cursor()
+		c.execute("select a.* from messages a left join sent_messages b on a.message_id=b.message_id and b.message_id is null order by a.message_id desc limit 10;")
+		r = [dict((c.description[i][0], value) \
+			for i, value in enumerate(row)) for row in c.fetchall()]
+		
+		# print json.dumps(r[0])	
+ 		msg = json.JSONEncoder().encode({"d":r[0]})
+ 		# json.dumps(msg)
+ 	except Exception as e:
+ 		print e
+ 		conn.close()
+
+def on_publish(mosq, obj, mid):
+	for item in r:
+ 		c.execute("insert into sent_messages values (?);", item['message_id'])
+ 	
+
+##Assign callbacks
+mqttc.on_connect = on_connect
+mqttc.on_publish = on_publish
 
 #Set authentication values, if connecting to registered service
 if username is not "":
@@ -32,43 +53,14 @@ if username is not "":
 
 mqttc.connect(host=broker, port=1883, keepalive=60)
 
-
 #Publishing to IBM Internet of Things Foundation
 mqttc.loop_start() 
 
 while mqttc.loop() == 0:
-	# gyro_xout = read_word_2c(0x43)
-	# gyro_yout = read_word_2c(0x45)
-	# gyro_zout = read_word_2c(0x47)
-
-	# gyro_xout_scaled =(gyro_xout / 131)
-	# gyro_yout_scaled =(gyro_yout / 131)
-	# gyro_zout_scaled =(gyro_zout / 131)
-
-	# accel_xout = read_word_2c(0x3b)
-	# accel_yout = read_word_2c(0x3d)
-	# accel_zout = read_word_2c(0x3f)
-	# accel_xout_scaled = accel_xout / 16384.0
-	# accel_yout_scaled = accel_yout / 16384.0
-	# accel_zout_scaled = accel_zout / 16384.0
-
-	# x_rotation=get_x_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled)
-	# y_rotation=get_y_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled)
-	try:
-		conn=sqlite3.connect("sqlite3/msgDb.db")
-		c = conn.cursor()
-		c.execute("select a.* from messages a left join sent_messages b on a.message_id=b.message_id and b.message_id is null order by a.message_id desc limit 1;")
-		r = [dict((c.description[i][0], value) \
-			for i, value in enumerate(row)) for row in c.fetchall()]
-		
-		# print json.dumps(r[0])	
- 		msg = json.JSONEncoder().encode({"d":r[0]})
- 		# json.dumps(msg)
- 	except:
- 		conn.close()
- 	mqttc.publish(topic, payload=msg, qos=2, retain=False)
- 	print "message published"
-
- 	
+	
+	# mqttc.publish(topic, payload=msg, qos=2, retain=False)
+ 	# print "message published"
+ 	publish.multiple()
  	pass
+
 

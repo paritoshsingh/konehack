@@ -66,15 +66,15 @@ while 1:
 	y_rotation=get_y_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled)
 
 	try:
-		conn=sqlite3.connect("sqlite3/msgDb.db")
+		print time.time()
+		conn=sqlite3.connect("/home/pi/sqlite3/msgDb.db")
 		c = conn.cursor()
-		c.execute("insert into messages (gyro_xout_scaled,gyro_yout_scaled, gyro_zout_scaled, accel_xout_scaled, accel_yout_scaled, accel_zout_scaled, x_rotation, y_rotation, generate_ts) values (?,?,?,?,?,?,?,?,?);",
-			(gyro_xout_scaled,gyro_yout_scaled, gyro_zout_scaled, accel_xout_scaled, accel_yout_scaled, accel_zout_scaled, x_rotation, y_rotation, datetime.utcnow().isoformat(' ')))
-		c.commit()
-		print "here"
-	except:
+		c.execute("insert into messages (gyro_xout_scaled,gyro_yout_scaled, gyro_zout_scaled, accel_xout_scaled, accel_yout_scaled, accel_zout_scaled, x_rotation, y_rotation, measured_timestamp) values (?,?,?,?,?,?,?,?,?);", (gyro_xout_scaled, gyro_yout_scaled, gyro_zout_scaled, accel_xout_scaled, accel_yout_scaled, accel_zout_scaled, x_rotation, y_rotation, time.time()))
+		conn.commit()
+	except Exception as e:
+		print e
 		conn.close()
 		sys.exit(0)
 	## revisit current paradigm of opening and closing db conn for making just one entry
 	conn.close()
-	time.sleep (0.05)
+	time.sleep (0.02)

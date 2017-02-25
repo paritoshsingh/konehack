@@ -65,12 +65,32 @@ accel_zout_scaled = accel_zout / 16384.0
 x_rotation=get_x_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled)
 y_rotation=get_y_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled)
 
+print gyro_xout
+print gyro_yout
+print gyro_zout
+
+print gyro_xout_scaled
+print gyro_yout_scaled
+print gyro_zout_scaled
+
+print accel_xout
+print accel_yout 
+print accel_zout
+
+print accel_xout_scaled
+print accel_yout_scaled
+print accel_zout_scaled
+
+print x_rotation
+print y_rotation
+
 try:
 	conn=sqlite3.connect("sqlite3/msgDb.db")
 	c = conn.cursor()
 	c.execute("insert into messages (gyro_xout_scaled,gyro_yout_scaled, gyro_zout_scaled, accel_xout_scaled, accel_yout_scaled, accel_zout_scaled, x_rotation, y_rotation, generate_ts) values (?,?,?,?,?,?,?,?,?);",
 		gyro_xout_scaled,gyro_yout_scaled, gyro_zout_scaled, accel_xout_scaled, accel_yout_scaled, accel_zout_scaled, x_rotation, y_rotation, datetime.utcnow().isoformat(' '))
 	c.commit()
+	print "here"
 except:
 	conn.close()
 	sys.exit(0)

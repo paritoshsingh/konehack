@@ -45,55 +45,36 @@ address = 0x68       # This is the address value read via the i2cdetect command
 # Now wake the 6050 up as it starts in sleep mode
 bus.write_byte_data(address, power_mgmt_1, 0)
 
+while 1:
+	gyro_xout = read_word_2c(0x43)
+	gyro_yout = read_word_2c(0x45)
+	gyro_zout = read_word_2c(0x47)
 
-gyro_xout = read_word_2c(0x43)
-gyro_yout = read_word_2c(0x45)
-gyro_zout = read_word_2c(0x47)
+	gyro_xout_scaled = (gyro_xout / 131)
+	gyro_yout_scaled = (gyro_yout / 131)
+	gyro_zout_scaled = (gyro_zout / 131)
 
-gyro_xout_scaled = (gyro_xout / 131)
-gyro_yout_scaled = (gyro_yout / 131)
-gyro_zout_scaled = (gyro_zout / 131)
+	accel_xout = read_word_2c(0x3b)
+	accel_yout = read_word_2c(0x3d)
+	accel_zout = read_word_2c(0x3f)
 
-accel_xout = read_word_2c(0x3b)
-accel_yout = read_word_2c(0x3d)
-accel_zout = read_word_2c(0x3f)
+	accel_xout_scaled = accel_xout / 16384.0
+	accel_yout_scaled = accel_yout / 16384.0
+	accel_zout_scaled = accel_zout / 16384.0
 
-accel_xout_scaled = accel_xout / 16384.0
-accel_yout_scaled = accel_yout / 16384.0
-accel_zout_scaled = accel_zout / 16384.0
+	x_rotation=get_x_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled)
+	y_rotation=get_y_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled)
 
-x_rotation=get_x_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled)
-y_rotation=get_y_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled)
-
-print gyro_xout
-print gyro_yout
-print gyro_zout
-
-print gyro_xout_scaled
-print gyro_yout_scaled
-print gyro_zout_scaled
-
-print accel_xout
-print accel_yout 
-print accel_zout
-
-print accel_xout_scaled
-print accel_yout_scaled
-print accel_zout_scaled
-
-print x_rotation
-print y_rotation
-
-try:
-	conn=sqlite3.connect("sqlite3/msgDb.db")
-	c = conn.cursor()
-	c.execute("insert into messages (gyro_xout_scaled,gyro_yout_scaled, gyro_zout_scaled, accel_xout_scaled, accel_yout_scaled, accel_zout_scaled, x_rotation, y_rotation, generate_ts) values (?,?,?,?,?,?,?,?,?);",
-		(gyro_xout_scaled,gyro_yout_scaled, gyro_zout_scaled, accel_xout_scaled, accel_yout_scaled, accel_zout_scaled, x_rotation, y_rotation, datetime.utcnow().isoformat(' ')))
-	c.commit()
-	print "here"
-except:
+	try:
+		conn=sqlite3.connect("sqlite3/msgDb.db")
+		c = conn.cursor()
+		c.execute("insert into messages (gyro_xout_scaled,gyro_yout_scaled, gyro_zout_scaled, accel_xout_scaled, accel_yout_scaled, accel_zout_scaled, x_rotation, y_rotation, generate_ts) values (?,?,?,?,?,?,?,?,?);",
+			(gyro_xout_scaled,gyro_yout_scaled, gyro_zout_scaled, accel_xout_scaled, accel_yout_scaled, accel_zout_scaled, x_rotation, y_rotation, datetime.utcnow().isoformat(' ')))
+		c.commit()
+		print "here"
+	except:
+		conn.close()
+		sys.exit(0)
+	## revisit current paradigm of opening and closing db conn for making just one entry
 	conn.close()
-	sys.exit(0)
-## revisit current paradigm of opening and closing db conn for making just one entry
-conn.close()
-time.sleep (0.05)
+	time.sleep (0.05)

@@ -99,8 +99,8 @@ while mqttc.loop() == 0:
 	time_stamp=datetime.utcnow().isoformat(' ')
  	msg = json.JSONEncoder().encode({"d":{"measured_timestamp":time_stamp, "gyro_xout":gyro_xout_scaled, "gyro_yout":gyro_yout_scaled, "gyro_zout":gyro_zout_scaled, "accel_xout":accel_xout_scaled, "accel_yout":accel_yout_scaled, "accel_zout":accel_zout_scaled, "x_rotation":x_rotation, "y_rotation":y_rotation}})
  
- 	mqttc.publish(topic, payload=msg, qos=1, retain=False)
- 	print "message published %s", time_stamp 
+ 	mqttc.publish(topic, payload=msg, qos=0, retain=False)
+ 	print "message published ", time_stamp 
 
  	time.sleep(0.05)
  	pass

@@ -69,7 +69,7 @@ while 1:
 		print time.time()
 		conn=sqlite3.connect("/home/pi/sqlite3/msgDb.db")
 		c = conn.cursor()
-		c.execute("insert into messages (gyro_xout_scaled,gyro_yout_scaled, gyro_zout_scaled, accel_xout_scaled, accel_yout_scaled, accel_zout_scaled, x_rotation, y_rotation, generate_ts) values (?,?,?,?,?,?,?,?,?);", (gyro_xout_scaled, gyro_yout_scaled, gyro_zout_scaled, accel_xout_scaled, accel_yout_scaled, accel_zout_scaled, x_rotation, y_rotation, time.time()))
+		c.execute("insert into messages (gyro_xout_scaled,gyro_yout_scaled, gyro_zout_scaled, accel_xout_scaled, accel_yout_scaled, accel_zout_scaled, x_rotation, y_rotation, measured_timestamp) values (?,?,?,?,?,?,?,?,?);", (gyro_xout_scaled, gyro_yout_scaled, gyro_zout_scaled, accel_xout_scaled, accel_yout_scaled, accel_zout_scaled, x_rotation, y_rotation, time.time()))
 		conn.commit()
 	except Exception as e:
 		print e

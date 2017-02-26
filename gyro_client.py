@@ -58,10 +58,6 @@ deviceType = "gyro-pi"
 
 topic = "iot-2/evt/status/fmt/json"
 
-
-print("devicid: " + deviceId)
-
-
 #Creating the client connection
 #Set clientID and broker
 clientID = "d:" + organization + ":" + deviceType + ":" + deviceId
@@ -96,10 +92,10 @@ while mqttc.loop() == 0:
 
 	x_rotation=get_x_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled)
 	y_rotation=get_y_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled)
-	time_stamp=datetime.utcnow().isoformat(' ')
+	time_stamp=time.time()
  	msg = json.JSONEncoder().encode({"d":{"measured_timestamp":time_stamp, "gyro_xout":gyro_xout_scaled, "gyro_yout":gyro_yout_scaled, "gyro_zout":gyro_zout_scaled, "accel_xout":accel_xout_scaled, "accel_yout":accel_yout_scaled, "accel_zout":accel_zout_scaled, "x_rotation":x_rotation, "y_rotation":y_rotation}})
  
- 	mqttc.publish(topic, payload=msg, qos=0, retain=False)
+ 	mqttc.publish(topic, payload=msg, qos=2, retain=False)
  	print "message published ", time_stamp 
 
  	time.sleep(0.05)

@@ -51,7 +51,6 @@ time.sleep(0.01)
 
 Values = []
 Total = 0
-
 #Set the variables for connecting to the iot service
 broker = ""
 deviceId="gyro-pi1" #you can give the    address as default also
@@ -76,31 +75,36 @@ if username is not "":
 mqttc.connect(host=broker, port=1883, keepalive=60)
 
 
-#Publishing to IBM Internet of Things Foundation
+
 while True:
-  if mpu6050.fifoCount == 0:
-    Status= mpu6050.readStatus()
-    # print "Status",Status
-    if (Status & 0x10) == 0x10 :
-      print "Overrun Error! Quitting.\n"
-      quit()
-    if (Status & 0x01) == 0x01:
-      start_time=time.time()
-      Values.extend(mpu6050.readDataFromFifo())
+
+
+ if mpu6050.fifoCount == 0:
+     Status= mpu6050.readStatus()
+
+     # print "Status",Status
+     if (Status & 0x10) == 0x10 :
+        print "Overrun Error! Quitting.\n"
+        quit()
+
+     if (Status & 0x01) == 0x01:
+        start_time=time.time()
+        Values.extend(mpu6050.readDataFromFifo())
  
-  else:
-    start_time=time.time()
-    Values.extend(mpu6050.readDataFromFifo())
-    #read Total number of data taken
-  Total = len(Values)/14
-    # print Total
-  if Total >= TargetSampleNumber :
-  break;
-  
-  for loop in range (TargetSampleNumber):
+ else:
+        start_time=time.time()
+        Values.extend(mpu6050.readDataFromFifo())
+
+ #read Total number of data taken
+ Total = len(Values)/14
+ # print Total
+ if Total >= TargetSampleNumber :
+   break;
+
+for loop in range (TargetSampleNumber):
     SimpleSample = Values[loop*14 : loop*14+14]
     I = mpu6050.convertData(SimpleSample)
-
+    print I
     gyro_xout_scaled =(I.Gyrox/131)
     gyro_yout_scaled =(I.Gyroy/131)
     gyro_zout_scaled =(I.Gyroz/131)
@@ -119,6 +123,8 @@ while True:
 
     mqttc.publish(topic, payload=msg, qos=1, retain=False)
     time.sleep(0.005)
+
+ 
 
 
  

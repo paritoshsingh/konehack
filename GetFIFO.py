@@ -104,16 +104,16 @@ for loop in range (TargetSampleNumber):
     SimpleSample = Values[loop*14 : loop*14+14]
     I = mpu6050.convertData(SimpleSample)
     
-    gyro_xout_scaled =(I.Gyrox/131)
-    gyro_yout_scaled =(I.Gyroy/131)
-    gyro_zout_scaled =(I.Gyroz/131)
+    gyro_xout_scaled =(I.Gyrox)
+    gyro_yout_scaled =(I.Gyroy)
+    gyro_zout_scaled =(I.Gyroz)
 
     accel_xout = I.Gx
     accel_yout = I.Gy
     accel_zout = I.Gz
-    accel_xout_scaled = accel_xout/16384.0
-    accel_yout_scaled = accel_yout/16384.0
-    accel_zout_scaled = accel_zout/16384.0
+    accel_xout_scaled = accel_xout
+    accel_yout_scaled = accel_yout
+    accel_zout_scaled = accel_zout
     x_rotation=get_x_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled)
     y_rotation=get_y_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled)
     time_stamp=start_time + loop*((time.time()-start_time)/TargetSampleNumber)

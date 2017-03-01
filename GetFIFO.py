@@ -57,5 +57,5 @@ while True:
  # print Total
  if Total >= TargetSampleNumber :
    break;
-print Values
+print Values[1]
  

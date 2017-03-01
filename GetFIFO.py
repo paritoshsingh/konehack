@@ -77,16 +77,17 @@ mqttc.connect(host=broker, port=1883, keepalive=60)
 
 
 #Publishing to IBM Internet of Things Foundation
-while 1:
+while True:
   if mpu6050.fifoCount == 0:
     Status= mpu6050.readStatus()
-      # print "Status",Status
-  if (Status & 0x10) == 0x10 :
-    print "Overrun Error! Quitting.\n"
-    quit()
-  if (Status & 0x01) == 0x01:
-    start_time=time.time()
-    Values.extend(mpu6050.readDataFromFifo())
+    # print "Status",Status
+    if (Status & 0x10) == 0x10 :
+      print "Overrun Error! Quitting.\n"
+      quit()
+    if (Status & 0x01) == 0x01:
+      start_time=time.time()
+      Values.extend(mpu6050.readDataFromFifo())
+ 
   else:
     start_time=time.time()
     Values.extend(mpu6050.readDataFromFifo())

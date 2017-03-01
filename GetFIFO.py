@@ -25,8 +25,8 @@ def get_x_rotation(x,y,z):
 #TargetSampleNumber= 1024
 #TargetRate =  33    # frequency =  8000 / ( integr value + 1)  minimum frequency=32,25
 
-InputSampleRate = 33#raw_input("Sample Rate(32.25 ... 2000) ?")
-InputSampleNumber = 1024 #raw_input("Number of sample to take ?")    
+InputSampleRate = 66#raw_input("Sample Rate(32.25 ... 2000) ?")
+InputSampleNumber = 2048 #raw_input("Number of sample to take ?")    
 
 TargetSampleNumber= int(InputSampleNumber)
 TargetRate= float(InputSampleRate)
@@ -119,7 +119,7 @@ for loop in range (TargetSampleNumber):
     time_stamp=start_time + loop*((time.time()-start_time)/TargetSampleNumber)
 
     msg = json.JSONEncoder().encode({"d":{"measured_timestamp":time_stamp, "gyro_xout_scaled":gyro_xout_scaled, "gyro_yout_scaled":gyro_yout_scaled, "gyro_zout_scaled":gyro_zout_scaled, "accel_xout_scaled":accel_xout_scaled, "accel_yout_scaled":accel_yout_scaled, "accel_zout_scaled":accel_zout_scaled, "x_rotation":x_rotation, "y_rotation":y_rotation}})
-    print "pub"
+    print "pub", time_stamp
     mqttc.publish(topic, payload=msg, qos=1, retain=False)
     
     time.sleep(0.005)

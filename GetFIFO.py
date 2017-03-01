@@ -4,6 +4,11 @@ import MPU6050
 import math
 import time
 import numpy
+import paho.mqtt.client as mqtt
+import json
+import uuid
+import smbus
+from datetime import datetime
 
 #TargetSampleNumber= 1024
 #TargetRate =  33    # frequency =  8000 / ( integr value + 1)  minimum frequency=32,25
@@ -35,31 +40,74 @@ time.sleep(0.01)
 Values = []
 Total = 0
 
-while True:
+#Set the variables for connecting to the iot service
+broker = ""
+deviceId="gyro-pi1" #you can give the    address as default also
+topic = "iot-2/evt/status/fmt/json"
+username = "use-token-auth"
+password = "gyropiauth" #auth-token
+organization = "blve66" #org_id
+deviceType = "gyro-pi"
+
+topic = "iot-2/evt/status/fmt/json"
+
+#Creating the client connection
+#Set clientID and broker
+clientID = "d:" + organization + ":" + deviceType + ":" + deviceId
+broker = organization + ".messaging.internetofthings.ibmcloud.com"
+mqttc = mqtt.Client(clientID)
+
+#Set authentication values, if connecting to registered service
+if username is not "":
+  mqttc.username_pw_set(username, password=password)
+
+mqttc.connect(host=broker, port=1883, keepalive=60)
 
 
- if mpu6050.fifoCount == 0:
-     Status= mpu6050.readStatus()
+#Publishing to IBM Internet of Things Foundation
+mqttc.loop_start() 
 
-     # print "Status",Status
-     if (Status & 0x10) == 0x10 :
-        print "Overrun Error! Quitting.\n"
-        quit()
+while mqttc.loop() == 0:
+  if mpu6050.fifoCount == 0:
+    Status= mpu6050.readStatus()
+    # print "Status",Status
+  if (Status & 0x10) == 0x10 :
+    print "Overrun Error! Quitting.\n"
+    quit()
+  if (Status & 0x01) == 0x01:
+    start_time=time.time()
+    Values.extend(mpu6050.readDataFromFifo())
+  else:
+    start_time=time.time()
+    Values.extend(mpu6050.readDataFromFifo())
+  #read Total number of data taken
+  Total = len(Values)/14
+  # print Total
+  if Total >= TargetSampleNumber :
+    break;
 
-     if (Status & 0x01) == 0x01:
-        Values.extend(mpu6050.readDataFromFifo())
- 
- else:
-        Values.extend(mpu6050.readDataFromFifo())
-
- #read Total number of data taken
- Total = len(Values)/14
- # print Total
- if Total >= TargetSampleNumber :
-   break;
-
-for loop in range (TargetSampleNumber):
+  for loop in range (TargetSampleNumber):
     SimpleSample = Values[loop*14 : loop*14+14]
     I = mpu6050.convertData(SimpleSample)
-    print I
+    gyro_xout_scaled =(I.Gyrox[loop]/131)
+    gyro_yout_scaled =(I.Gyroy[loop]/131)
+    gyro_zout_scaled =(I.Gyroz[loop]/131)
+
+    accel_xout = I.Gx[loop]
+    accel_yout = I.Gy[loop]
+    accel_zout = I.Gz[loop]
+    accel_xout_scaled = accel_xout / 16384.0
+    accel_yout_scaled = accel_yout / 16384.0
+    accel_zout_scaled = accel_zout / 16384.0
+
+    x_rotation=get_x_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled)
+    y_rotation=get_y_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled)
+    time_stamp=start_time + loop*((time.time()-start_time)/TargetSampleNumber)
+
+    msg = json.JSONEncoder().encode({"d":{"measured_timestamp":time_stamp, "gyro_xout_scaled":gyro_xout_scaled, "gyro_yout_scaled":gyro_yout_scaled, "gyro_zout_scaled":gyro_zout_scaled, "accel_xout_scaled":accel_xout_scaled, "accel_yout_scaled":accel_yout_scaled, "accel_zout_scaled":accel_zout_scaled, "x_rotation":x_rotation, "y_rotation":y_rotation}})
+
+    mqttc.publish(topic, payload=msg, qos=1, retain=False)
+     
+
+    # time.sleep(0.005)
  

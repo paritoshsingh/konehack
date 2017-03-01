@@ -73,10 +73,11 @@ if username is not "":
   mqttc.username_pw_set(username, password=password)
 
 mqttc.connect(host=broker, port=1883, keepalive=60)
+#Publishing to IBM Internet of Things Foundation
+mqttc.loop_start()
 
 
-
-while True:
+while mqttc.loop() == 0:
 
 
  if mpu6050.fifoCount == 0:
@@ -104,7 +105,7 @@ while True:
 for loop in range (TargetSampleNumber):
     SimpleSample = Values[loop*14 : loop*14+14]
     I = mpu6050.convertData(SimpleSample)
-    print I
+    
     gyro_xout_scaled =(I.Gyrox/131)
     gyro_yout_scaled =(I.Gyroy/131)
     gyro_zout_scaled =(I.Gyroz/131)
@@ -122,6 +123,7 @@ for loop in range (TargetSampleNumber):
     msg = json.JSONEncoder().encode({"d":{"measured_timestamp":time_stamp, "gyro_xout_scaled":gyro_xout_scaled, "gyro_yout_scaled":gyro_yout_scaled, "gyro_zout_scaled":gyro_zout_scaled, "accel_xout_scaled":accel_xout_scaled, "accel_yout_scaled":accel_yout_scaled, "accel_zout_scaled":accel_zout_scaled, "x_rotation":x_rotation, "y_rotation":y_rotation}})
 
     mqttc.publish(topic, payload=msg, qos=1, retain=False)
+    print "published ", time_stamp
     time.sleep(0.005)
 
  

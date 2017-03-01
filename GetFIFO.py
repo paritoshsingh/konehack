@@ -60,5 +60,6 @@ while True:
 
 for loop in range (TargetSampleNumber):
     SimpleSample = Values[loop*14 : loop*14+14]
-    print SimpleSample
+    I = mpu6050.convertData(SimpleSample)
+    print I
  

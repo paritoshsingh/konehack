@@ -10,6 +10,9 @@ import uuid
 import smbus
 from datetime import datetime
 
+def dist(a,b):
+    return math.sqrt((a*a)+(b*b))
+
 def get_y_rotation(x,y,z):
     radians = math.atan2(x, dist(y,z))
     return -math.degrees(radians)
@@ -77,50 +80,51 @@ mqttc.connect(host=broker, port=1883, keepalive=60)
 mqttc.loop_start() 
 
 while mqttc.loop() == 0:
-  if mpu6050.fifoCount == 0:
-    Status= mpu6050.readStatus()
-    # print "Status",Status
-  if (Status & 0x10) == 0x10 :
-    print "Overrun Error! Quitting.\n"
-    quit()
-  if (Status & 0x01) == 0x01:
-    start_time=time.time()
-    Values.extend(mpu6050.readDataFromFifo())
-  else:
-    start_time=time.time()
-    Values.extend(mpu6050.readDataFromFifo())
-  #read Total number of data taken
-  Total = len(Values)/14
-  # print Total
-  if Total >= TargetSampleNumber :
-    break;
+  while 1:
+    if mpu6050.fifoCount == 0:
+      Status= mpu6050.readStatus()
+      # print "Status",Status
+    if (Status & 0x10) == 0x10 :
+      print "Overrun Error! Quitting.\n"
+      quit()
+    if (Status & 0x01) == 0x01:
+      start_time=time.time()
+      Values.extend(mpu6050.readDataFromFifo())
+    else:
+      start_time=time.time()
+      Values.extend(mpu6050.readDataFromFifo())
+    #read Total number of data taken
+    Total = len(Values)/14
+    # print Total
+    if Total >= TargetSampleNumber :
+      break;
 
-  for loop in range (TargetSampleNumber):
-    SimpleSample = Values[loop*14 : loop*14+14]
-    I = mpu6050.convertData(SimpleSample)
-    print type(I)
-    print type(I.Gx)
-    print I.Gx
-    print I
-    gyro_xout_scaled =(I.Gyrox/131)
-    gyro_yout_scaled =(I.Gyroy/131)
-    gyro_zout_scaled =(I.Gyroz/131)
+    for loop in range (TargetSampleNumber):
+      SimpleSample = Values[loop*14 : loop*14+14]
+      I = mpu6050.convertData(SimpleSample)
+      print type(I)
+      print type(I.Gx)
+      print I.Gx
+      print I
+      gyro_xout_scaled =(I.Gyrox/131)
+      gyro_yout_scaled =(I.Gyroy/131)
+      gyro_zout_scaled =(I.Gyroz/131)
 
-    accel_xout = I.Gx
-    accel_yout = I.Gy
-    accel_zout = I.Gz
-    accel_xout_scaled = accel_xout/16384.0
-    accel_yout_scaled = accel_yout/16384.0
-    accel_zout_scaled = accel_zout/16384.0
+      accel_xout = I.Gx
+      accel_yout = I.Gy
+      accel_zout = I.Gz
+      accel_xout_scaled = accel_xout/16384.0
+      accel_yout_scaled = accel_yout/16384.0
+      accel_zout_scaled = accel_zout/16384.0
 
-    x_rotation=get_x_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled)
-    y_rotation=get_y_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled)
-    time_stamp=start_time + loop*((time.time()-start_time)/TargetSampleNumber)
+      x_rotation=get_x_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled)
+      y_rotation=get_y_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled)
+      time_stamp=start_time + loop*((time.time()-start_time)/TargetSampleNumber)
 
-    msg = json.JSONEncoder().encode({"d":{"measured_timestamp":time_stamp, "gyro_xout_scaled":gyro_xout_scaled, "gyro_yout_scaled":gyro_yout_scaled, "gyro_zout_scaled":gyro_zout_scaled, "accel_xout_scaled":accel_xout_scaled, "accel_yout_scaled":accel_yout_scaled, "accel_zout_scaled":accel_zout_scaled, "x_rotation":x_rotation, "y_rotation":y_rotation}})
+      msg = json.JSONEncoder().encode({"d":{"measured_timestamp":time_stamp, "gyro_xout_scaled":gyro_xout_scaled, "gyro_yout_scaled":gyro_yout_scaled, "gyro_zout_scaled":gyro_zout_scaled, "accel_xout_scaled":accel_xout_scaled, "accel_yout_scaled":accel_yout_scaled, "accel_zout_scaled":accel_zout_scaled, "x_rotation":x_rotation, "y_rotation":y_rotation}})
 
-    mqttc.publish(topic, payload=msg, qos=1, retain=False)
-     
+      mqttc.publish(topic, payload=msg, qos=1, retain=False)
+      time.sleep(0.005)
+    pass
 
-    # time.sleep(0.005)
  

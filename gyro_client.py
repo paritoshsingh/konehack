@@ -92,12 +92,12 @@ while mqttc.loop() == 0:
 
 	x_rotation=get_x_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled)
 	y_rotation=get_y_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled)
-	time_stamp=time.time()
+	ktime_stamp=time.time()
  	msg = json.JSONEncoder().encode({"d":{"measured_timestamp":time_stamp, "gyro_xout_scaled":gyro_xout_scaled, "gyro_yout_scaled":gyro_yout_scaled, "gyro_zout_scaled":gyro_zout_scaled, "accel_xout_scaled":accel_xout_scaled, "accel_yout_scaled":accel_yout_scaled, "accel_zout_scaled":accel_zout_scaled, "x_rotation":x_rotation, "y_rotation":y_rotation}})
  
  	mqttc.publish(topic, payload=msg, qos=1, retain=False)
  	print "message published ", time_stamp 
 
- 	time.sleep(0.02)
+ 	time.sleep(0.05)
  	pass
 

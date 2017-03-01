@@ -67,7 +67,7 @@ while 1:
 
 	try:
 		print time.time()
-		conn=sqlite3.connect("/home/pi/sqlite3/againLastDb.db")
+		conn=sqlite3.connect("/home/pi/sqlite3/trainingDb.db")
 		c = conn.cursor()
 		c.execute("insert into messages (gyro_xout_scaled,gyro_yout_scaled, gyro_zout_scaled, accel_xout_scaled, accel_yout_scaled, accel_zout_scaled, x_rotation, y_rotation, measured_timestamp) values (?,?,?,?,?,?,?,?,?);", (gyro_xout_scaled, gyro_yout_scaled, gyro_zout_scaled, accel_xout_scaled, accel_yout_scaled, accel_zout_scaled, x_rotation, y_rotation, time.time()))
 		conn.commit()

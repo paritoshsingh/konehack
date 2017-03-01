@@ -10,6 +10,15 @@ import uuid
 import smbus
 from datetime import datetime
 
+def get_y_rotation(x,y,z):
+    radians = math.atan2(x, dist(y,z))
+    return -math.degrees(radians)
+
+def get_x_rotation(x,y,z):
+    radians = math.atan2(y, dist(x,z))
+    return math.degrees(radians)
+
+
 #TargetSampleNumber= 1024
 #TargetRate =  33    # frequency =  8000 / ( integr value + 1)  minimum frequency=32,25
 

@@ -57,5 +57,8 @@ while True:
  # print Total
  if Total >= TargetSampleNumber :
    break;
-print Values[1]
+
+for loop in range (TargetSampleNumber):
+    SimpleSample = Values[loop*14 : loop*14+14]
+    print SimpleSample
  

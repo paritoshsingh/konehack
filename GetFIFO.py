@@ -43,8 +43,6 @@ time.sleep(0.01)
 
 print "Capturing {0} samples at {1} samples/sec".format(TargetSampleNumber, mpu6050.SampleRate)
 
-raw_input("Press enter to start")
-
 mpu6050.resetFifo()
 mpu6050.enableFifo(True)
 time.sleep(0.01)
@@ -121,7 +119,7 @@ for loop in range (TargetSampleNumber):
     time_stamp=start_time + loop*((time.time()-start_time)/TargetSampleNumber)
 
     msg = json.JSONEncoder().encode({"d":{"measured_timestamp":time_stamp, "gyro_xout_scaled":gyro_xout_scaled, "gyro_yout_scaled":gyro_yout_scaled, "gyro_zout_scaled":gyro_zout_scaled, "accel_xout_scaled":accel_xout_scaled, "accel_yout_scaled":accel_yout_scaled, "accel_zout_scaled":accel_zout_scaled, "x_rotation":x_rotation, "y_rotation":y_rotation}})
-
+    print "pub"
     mqttc.publish(topic, payload=msg, qos=1, retain=False)
     
     time.sleep(0.005)

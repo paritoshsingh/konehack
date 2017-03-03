@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import MySQLdb
+#import MySQLdb
 import MPU6050
 import math
 import time
@@ -26,7 +26,7 @@ def get_x_rotation(x,y,z):
 #TargetRate =  33    # frequency =  8000 / ( integr value + 1)  minimum frequency=32,25
 
 InputSampleRate = 128#raw_input("Sample Rate(32.25 ... 2000) ?")
-InputSampleNumber = 512 #raw_input("Number of sample to take ?")    
+InputSampleNumber = 1024 #raw_input("Number of sample to take ?")    
 
 TargetSampleNumber= int(InputSampleNumber)
 TargetRate= float(InputSampleRate)
@@ -97,11 +97,13 @@ while True:
  # print Total
  if Total >= TargetSampleNumber :
    break;
- 
- db = MySQLdb.connect("localhost", "root", "funk", "pidata")
- curs=db.cursor()
- print mpu6050.convertData(Values)
-
+ #print type(Values) 
+ #print Values
+ #db = MySQLdb.connect("localhost", "root", "funk", "pidata")
+ #curs=db.cursor()
+ #curs.execute("insert into accel (ax, ts, sent_flg) values(%s, %s, %s)", (",".join(str(x) for x in Values),str(time.time()),0))
+ #db.commit()
+ #return
 
 for loop in range (TargetSampleNumber):
     SimpleSample = Values[loop*14 : loop*14+14]
@@ -120,10 +122,13 @@ for loop in range (TargetSampleNumber):
     x_rotation=get_x_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled)
     y_rotation=get_y_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled)
     time_stamp=start_time + float(loop*((time.time()-start_time)/TargetSampleNumber))
-
+    
     msg = json.JSONEncoder().encode({"d":{"measured_timestamp":time_stamp, "accel_xout_scaled":accel_xout_scaled, "accel_yout_scaled":accel_yout_scaled, "accel_zout_scaled":accel_zout_scaled}})
-    mqttc.publish(topic, payload=msg, qos=1, retain=False)
-      
+    mqttc.publish(topic, payload=msg, qos=0, retain=False)
+    print "published"
+    time.sleep(0.005)
+
+Values=[]
 
  
 

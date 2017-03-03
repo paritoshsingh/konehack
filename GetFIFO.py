@@ -1,5 +1,5 @@
 #!/usr/bin/python
-
+import MySQLdb
 import MPU6050
 import math
 import time
@@ -76,8 +76,6 @@ mqttc.loop_start()
 
 
 while True:
-
-
  if mpu6050.fifoCount == 0:
      Status= mpu6050.readStatus()
 
@@ -99,6 +97,11 @@ while True:
  # print Total
  if Total >= TargetSampleNumber :
    break;
+ 
+ db = MySQLdb.connect("localhost", "root", "funk", "pidata")
+ curs=db.cursor()
+ print mpu6050.convertData(Values)
+
 
 for loop in range (TargetSampleNumber):
     SimpleSample = Values[loop*14 : loop*14+14]

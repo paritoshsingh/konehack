@@ -26,7 +26,7 @@ def get_x_rotation(x,y,z):
 #TargetRate =  33    # frequency =  8000 / ( integr value + 1)  minimum frequency=32,25
 
 InputSampleRate = 128#raw_input("Sample Rate(32.25 ... 2000) ?")
-InputSampleNumber = 2048 #raw_input("Number of sample to take ?")    
+InputSampleNumber = 512 #raw_input("Number of sample to take ?")    
 
 TargetSampleNumber= int(InputSampleNumber)
 TargetRate= float(InputSampleRate)

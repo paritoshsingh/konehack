@@ -118,9 +118,9 @@ for loop in range (TargetSampleNumber):
     y_rotation=get_y_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled)
     time_stamp=start_time + float(loop*((time.time()-start_time)/TargetSampleNumber))
 
-    msg = json.JSONEncoder().encode({"d":{"measured_timestamp":time_stamp,"accel_xout_scaled":accel_xout_scaled, "accel_yout_scaled":accel_yout_scaled, "accel_zout_scaled":accel_zout_scaled, "x_rotation":x_rotation, "y_rotation":y_rotation}})
+    msg = json.JSONEncoder().encode({"d":{"measured_timestamp":time_stamp, "accel_xout_scaled":accel_xout_scaled, "accel_yout_scaled":accel_yout_scaled, "accel_zout_scaled":accel_zout_scaled}})
     mqttc.publish(topic, payload=msg, qos=1, retain=False)
-    
+      
 
  
 

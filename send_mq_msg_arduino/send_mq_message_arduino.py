@@ -11,12 +11,12 @@ from datetime import datetime
 ser=serial.Serial('/dev/ttyACM0')
 #Set the variables for connecting to the iot service
 broker = ""
-deviceId="gyro-pi1" #you can give the 	 address as default also
+deviceId="arduino" #you can give the 	 address as default also
 topic = "iot-2/evt/arduino/fmt/json"
 username = "use-token-auth"
-password = "gyropiauth" #auth-token
-organization = "blve66" #org_id
-deviceType = "gyro-pi"
+password = "superauth" #auth-token
+organization = "lscroe" #org_id
+deviceType = "accel"
 
 topic = "iot-2/evt/status/fmt/json"
 
